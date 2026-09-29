@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeceptAI — Threat Monitor</title>
+<style>
+  :root{
+    --bg: #0a1220;
+    --panel: #111d30;
+    --panel-2: #16233a;
+    --border: #223350;
+    --cyan: #34d6e0;
+    --amber: #f2a93b;
+    --red: #ff5d73;
+    --text: #e9f1fb;
+    --muted: #7d90ac;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background: radial-gradient(circle at 15% -10%, #10203a 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height:100vh;
+  }
+  a{ color: inherit; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand .mark{
+    width:34px; height:34px; border-radius:9px;
+    background: linear-gradient(135deg, var(--cyan), #1a8f9c);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--mono); font-weight:700; color:#04191c; font-size:15px;
+  }
+  .brand h1{ font-size:17px; margin:0; letter-spacing:0.2px; }
+  .brand p{ margin:1px 0 0; font-size:12.5px; color:var(--muted); }
+
+  .live{
+    display:flex; align-items:center; gap:8px;
+    font-family: var(--mono); font-size:12.5px; color: var(--muted);
+  }
+  .dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--cyan);
+    box-shadow: 0 0 0 0 rgba(52,214,224,.6);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(52,214,224,.55);}
+    70%{ box-shadow: 0 0 0 8px rgba(52,214,224,0);}
+    100%{ box-shadow: 0 0 0 0 rgba(52,214,224,0);}
+  }
+  @media (prefers-reduced-motion: reduce){ .dot{ animation:none; } }
+
+  .wrap{ padding: 22px 28px 40px; max-width:1280px; margin:0 auto; }
+
+  .stats{
+    display:grid; grid-template-columns: repeat(4, 1fr); gap:14px;
+    margin-bottom: 20px;
+  }
+  .stat{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .stat .num{ font-family: var(--mono); font-size: 26px; font-weight:600; }
+  .stat .label{ font-size: 12.5px; color: var(--muted); margin-top:4px; }
+  .stat.accent .num{ color: var(--cyan); }
+  .stat.alert .num{ color: var(--red); }
+
+  .body-grid{
+    display:grid; grid-template-columns: 340px 1fr; gap:16px; align-items:start;
+  }
+  @media (max-width: 860px){ .body-grid{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: 10px;
+    overflow:hidden;
+  }
+  .panel-head{
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .sessions{ max-height: 640px; overflow-y:auto; }
+  .session-row{
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor:pointer;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .session-row:hover{ background: var(--panel-2); }
+  .session-row.active{ background: var(--panel-2); box-shadow: inset 3px 0 0 var(--cyan); }
+  .session-top{ display:flex; align-items:center; justify-content:space-between; }
+  .sid{ font-family: var(--mono); font-size: 13px; }
+  .badge{
+    font-size: 10.5px; font-family: var(--mono); padding: 2px 7px;
+    border-radius: 20px; border:1px solid currentColor;
+  }
+  .badge.confidentiality{ color: var(--cyan); }
+  .badge.integrity{ color: var(--amber); }
+  .badge.availability{ color: var(--red); }
+  .session-reason{ font-size: 12.5px; color: var(--muted); }
+  .session-meta{ font-size: 11.5px; color: var(--muted); font-family: var(--mono); }
+
+  .empty{ padding: 30px 16px; color: var(--muted); font-size: 13px; text-align:center; }
+
+  .detail{ padding: 4px 0 18px; }
+  .detail-head{
+    padding: 16px 20px 8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  .detail-head h2{ font-size: 15px; margin:0; font-family: var(--mono); font-weight:600; }
+  .detail-head .port{ font-size:12.5px; color:var(--muted); font-family:var(--mono); }
+
+  .timeline{ padding: 6px 20px 8px; }
+  .tl-item{
+    display:grid; grid-template-columns: 96px 18px 1fr; gap:10px;
+    min-height: 46px;
+  }
+  .tl-time{ font-family: var(--mono); font-size:11px; color: var(--muted); padding-top:2px; }
+  .tl-rail{ display:flex; flex-direction:column; align-items:center; }
+  .tl-node{ width:9px; height:9px; border-radius:50%; background:var(--cyan); margin-top:4px; }
+  .tl-node.log{ background: var(--muted); width:6px; height:6px; }
+  .tl-line{ flex:1; width:1px; background: var(--border); margin-top:2px; }
+  .tl-content{ padding-bottom: 14px; }
+  .tl-event{ font-size: 13px; font-weight:600; }
+  .tl-sub{ font-size: 12px; color: var(--muted); margin-top:2px; }
+  .tl-cmd{
+    font-family: var(--mono); font-size:12.5px; margin-top:4px;
+    background: #0d1626; border:1px solid var(--border); border-radius:6px;
+    padding: 6px 10px; display:inline-block;
+  }
+
+  .footer-note{
+    margin-top: 22px; font-size:12px; color: var(--muted); text-align:center;
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">Dv1</div>
+      <div>
+        <h1>DeceptAI — Threat Monitor</h1>
+        <p>Reactive deception dashboard · reads logs/forensic_report.json</p>
+      </div>
+    </div>
+    <div class="live"><span class="dot"></span><span id="updated">connecting…</span></div>
+  </div>
+
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><div class="num" id="stat-sessions">0</div><div class="label">Sessions observed</div></div>
+      <div class="stat accent"><div class="num" id="stat-redirected">0</div><div class="label">Redirected to honeypot</div></div>
+      <div class="stat"><div class="num" id="stat-commands">0</div><div class="label">Attacker commands captured</div></div>
+      <div class="stat alert"><div class="num" id="stat-conf">0</div><div class="label">Confidentiality incidents</div></div>
+    </div>
+
+    <div class="body-grid">
+      <div class="panel">
+        <div class="panel-head">Sessions</div>
+        <div class="sessions" id="session-list">
+          <div class="empty">Waiting for attacker activity…</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="detail" id="detail">
+          <div class="empty">Select a session on the left to see its timeline.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note">Polls the local forensic report every 2s · AI-Orchestrated Multi-Agent Deception Framework</div>
+  </div>
+
+<script>
+  let selected = null;
+  let lastData = {};
+
+  function fmtTime(ts){
+    const d = new Date(ts * 1000);
+    return d.toLocaleTimeString([], {hour12:false});
+  }
+
+  function deriveSession(id, events){
+    const alert = events.find(e => e.event === "alert");
+    const decision = events.find(e => e.event === "decision");
+    const redirected = events.find(e => e.event === "redirected");
+    const commands = events.filter(e => e.event === "attacker_command");
+    return {
+      id, events,
+      reason: alert ? alert.details.reason : "—",
+      pillar: decision ? decision.details.pillar : "unknown",
+      port: redirected ? redirected.details.honeypot_port : null,
+      commandCount: commands.length,
+      firstTs: events[0] ? events[0].timestamp : 0,
+    };
+  }
+
+  function render(data){
+    lastData = data;
+    const ids = Object.keys(data).sort((a,b) => {
+      const ta = data[a][0] ? data[a][0].timestamp : 0;
+      const tb = data[b][0] ? data[b][0].timestamp : 0;
+      return tb - ta;
+    });
+
+    const sessions = ids.map(id => deriveSession(id, data[id]));
+
+    document.getElementById("stat-sessions").textContent = sessions.length;
+    document.getElementById("stat-redirected").textContent = sessions.filter(s => s.port).length;
+    document.getElementById("stat-commands").textContent = sessions.reduce((a,s) => a + s.commandCount, 0);
+    document.getElementById("stat-conf").textContent = sessions.filter(s => s.pillar === "confidentiality").length;
+
+    const listEl = document.getElementById("session-list");
+    if (sessions.length === 0){
+      listEl.innerHTML = '<div class="empty">Waiting for attacker activity…</div>';
+    } else {
+      listEl.innerHTML = sessions.map(s => `
+        <div class="session-row ${s.id === selected ? 'active' : ''}" data-id="${s.id}">
+          <div class="session-top">
+            <span class="sid">${s.id}</span>
+            <span class="badge ${s.pillar}">${s.pillar}</span>
+          </div>
+          <div class="session-reason">${s.reason}</div>
+          <div class="session-meta">${s.commandCount} commands · honeypot :${s.port ?? '—'}</div>
+        </div>
+      `).join("");
+      listEl.querySelectorAll(".session-row").forEach(row => {
+        row.addEventListener("click", () => { selected = row.dataset.id; render(lastData); });
+      });
+    }
+
+    if (!selected && sessions.length){ selected = sessions[0].id; }
+    renderDetail(selected ? data[selected] : null, selected);
+  }
+
+  function renderDetail(events, id){
+    const el = document.getElementById("detail");
+    if (!events){
+      el.innerHTML = '<div class="empty">Select a session on the left to see its timeline.</div>';
+      return;
+    }
+    const redirected = events.find(e => e.event === "redirected");
+    const labels = {
+      alert: "Suspicious message detected",
+      decision: "Decision agent classified pillar",
+      honeypot_spawned: "Honeypot clone spawned",
+      redirected: "Attacker silently redirected",
+      attacker_command: "Command captured on honeypot",
+    };
+
+    const items = events.map((e, i) => {
+      const isCmd = e.event === "attacker_command";
+      let sub = "";
+      if (e.event === "alert") sub = e.details.reason;
+      if (e.event === "decision") sub = `pillar: ${e.details.pillar} · honeydata: ${e.details.inject_honeydata}`;
+      if (e.event === "honeypot_spawned") sub = `port ${e.details.port} · pillar ${e.details.pillar}`;
+      if (e.event === "redirected") sub = `now talking to honeypot on port ${e.details.honeypot_port}`;
+
+      return `
+        <div class="tl-item">
+          <div class="tl-time">${fmtTime(e.timestamp)}</div>
+          <div class="tl-rail">
+            <div class="tl-node ${isCmd ? 'log' : ''}"></div>
+            ${i < events.length - 1 ? '<div class="tl-line"></div>' : ''}
+          </div>
+          <div class="tl-content">
+            <div class="tl-event">${labels[e.event] || e.event}</div>
+            ${isCmd
+              ? `<div class="tl-cmd">$ ${e.details.command}</div>`
+              : (sub ? `<div class="tl-sub">${sub}</div>` : "")}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    el.innerHTML = `
+      <div class="detail-head">
+        <h2>${id}</h2>
+        <span class="port">${redirected ? 'honeypot port ' + redirected.details.honeypot_port : 'not yet redirected'}</span>
+      </div>
+      <div class="timeline">${items}</div>
+    `;
+  }
+
+  async function poll(){
+    try{
+      const res = await fetch("/api/report", { cache: "no-store" });
+      const data = await res.json();
+      render(data);
+      document.getElementById("updated").textContent = "live · updated " + new Date().toLocaleTimeString([], {hour12:false});
+    } catch(err){
+      document.getElementById("updated").textContent = "connection lost";
+    }
+  }
+
+  poll();
+  setInterval(poll, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+{
+  "623f71a7": [
+    {
+      "event": "alert",
+      "timestamp": 1788688972.412,
+      "details": {
+        "reason": "signature match on 'cat'",
+        "message": "cat config.yaml"
+      }
+    },
+    {
+      "event": "decision",
+      "timestamp": 1788688972.417,
+      "details": {
+        "pillar": "confidentiality",
+        "reason": "signature match on 'cat'",
+        "inject_honeydata": true
+      }
+    },
+    {
+      "event": "honeypot_spawned",
+      "timestamp": 1788688972.421,
+      "details": {
+        "port": 9500,
+        "pillar": "confidentiality",
+        "honeydata": true
+      }
+    },
+    {
+      "event": "redirected",
+      "timestamp": 1788688972.424,
+      "details": {
+        "honeypot_port": 9500
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1788688972.433,
+      "details": {
+        "command": "cat config.yaml"
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1788688973.039,
+      "details": {
+        "command": "cat secret.txt"
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1788688973.647,
+      "details": {
+        "command": "cat access.log"
+      }
+    }
+  ],
+  "cc739302": [
+    {
+      "event": "alert",
+      "timestamp": 1789688780.46,
+      "details": {
+        "reason": "signature match on 'cat'",
+        "message": "cat config.yaml"
+      }
+    },
+    {
+      "event": "decision",
+      "timestamp": 1789688780.465,
+      "details": {
+        "pillar": "confidentiality",
+        "reason": "signature match on 'cat'",
+        "inject_honeydata": true
+      }
+    },
+    {
+      "event": "honeypot_spawned",
+      "timestamp": 1789688780.473,
+      "details": {
+        "port": 9500,
+        "pillar": "confidentiality",
+        "honeydata": true
+      }
+    },
+    {
+      "event": "redirected",
+      "timestamp": 1789688780.48,
+      "details": {
+        "honeypot_port": 9500
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789688780.491,
+      "details": {
+        "command": "cat config.yaml"
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789688781.1,
+      "details": {
+        "command": "cat secret.txt"
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789688781.752,
+      "details": {
+        "command": "cat access.log"
+      }
+    }
+  ],
+  "d1ea34b3": [
+    {
+      "event": "alert",
+      "timestamp": 1789689767.482,
+      "details": {
+        "reason": "signature match on 'cat'",
+        "message": "cat config.yaml"
+      }
+    },
+    {
+      "event": "decision",
+      "timestamp": 1789689767.488,
+      "details": {
+        "pillar": "confidentiality",
+        "reason": "signature match on 'cat'",
+        "inject_honeydata": true
+      }
+    },
+    {
+      "event": "honeypot_spawned",
+      "timestamp": 1789689767.5,
+      "details": {
+        "port": 9501,
+        "pillar": "confidentiality",
+        "honeydata": true
+      }
+    },
+    {
+      "event": "redirected",
+      "timestamp": 1789689767.507,
+      "details": {
+        "honeypot_port": 9501
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789689767.521,
+      "details": {
+        "command": "cat config.yaml"
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789689768.137,
+      "details": {
+        "command": "cat secret.txt"
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789689768.753,
+      "details": {
+        "command": "cat access.log"
+      }
+    }
+  ],
+  "98c89e54": [
+    {
+      "event": "alert",
+      "timestamp": 1789720832.756,
+      "details": {
+        "reason": "signature match on 'cat'",
+        "message": "cat config.yaml"
+      }
+    },
+    {
+      "event": "decision",
+      "timestamp": 1789720832.765,
+      "details": {
+        "pillar": "confidentiality",
+        "reason": "signature match on 'cat'",
+        "inject_honeydata": true
+      }
+    },
+    {
+      "event": "honeypot_spawned",
+      "timestamp": 1789720832.775,
+      "details": {
+        "port": 9500,
+        "pillar": "confidentiality",
+        "honeydata": true
+      }
+    },
+    {
+      "event": "redirected",
+      "timestamp": 1789720832.783,
+      "details": {
+        "honeypot_port": 9500
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789720832.794,
+      "details": {
+        "command": "cat config.yaml"
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789720833.409,
+      "details": {
+        "command": "cat secret.txt"
+      }
+    },
+    {
+      "event": "attacker_command",
+      "timestamp": 1789720834.024,
+      "details": {
+        "command": "cat access.log"
+      }
+    }
+  ]
+}
